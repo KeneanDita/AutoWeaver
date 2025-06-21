@@ -1,0 +1,8 @@
+{
+  "Cereals & Grains": ["Teff (white)", "Teff (red)", "Barley", "Wheat", "Maize (corn)", "Sorghum", "Millet", "Oats", "Rice (local)", "Rice (imported)", "Durum wheat", "Mixed grains (Balemashila)", "Injera (ready-made)", "Bread (white)", "Bread (brown)"],
+  "Vegetables": ["Onion (red)", "Onion (white)", "Garlic", "Potato", "Tomato", "Cabbage", "Carrot", "Green pepper", "Hot pepper", "Lettuce", "Beetroot", "Pumpkin", "Kale (Gomen)", "Eggplant", "Sweet potato", "Cauliflower", "Green beans", "Leek"],
+  "Fruits": ["Banana", "Mango", "Papaya", "Orange", "Lemon", "Avocado", "Pineapple", "Guava", "Watermelon", "Apple (local)", "Apple (imported)", "Grapes", "Dates", "Strawberry"],
+  "Animal Products": ["Beef (raw)", "Goat meat", "Mutton", "Chicken (live)", "Chicken (dressed)", "Milk (raw)", "Milk (pasteurized)", "Cheese (Ayib)", "Butter (traditional)", "Eggs", "Yogurt"],
+  "Processed & Packaged Foods": ["Cooking oil (palm)", "Cooking oil (sunflower)", "Margarine", "Sugar (local)", "Sugar (imported)", "Flour (wheat)", "Macaroni", "Spaghetti", "Salt", "Coffee (roasted)", "Tea (local)", "Powdered milk", "Baby food (e.g., Cerelac)"],
+  "Other Food Products & Condiments": ["Honey", "Pepper powder (berbere)", "Shiro (powdered chickpea)", "Lentils", "Chickpeas", "Fava beans", "Dry peas", "Spices mix (mitmita, korerima, etc.)", "Roasted grains (nifro)"]
+}
