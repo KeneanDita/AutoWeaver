@@ -1,24 +1,37 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Market Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Market Price Prediction</h2>
 
-{% block title %}Home - Forecast{% endblock %}
+        <form action="/predict" method="POST">
+            <label for="category">Select Category:</label>
+            <select id="category" name="category" required onchange="updateProducts()">
+                <option value="">--Select Category--</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select><br><br>
 
-{% block content %}
-    <form action="/predict" method="post">
-        <label for="product">Select Product:</label>
-        <select name="product" id="product">
-            {% for product in products %}
-                <option value="{{ product }}">{{ product }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Forecast</button>
-    </form>
+            <label for="product">Select Product:</label>
+            <select id="product" name="product" required>
+                <option value="">--Select Product--</option>
+            </select><br><br>
 
-    {% if forecast %}
-        <h2>12-Week Forecast for {{ selected_product }}</h2>
-        <ul>
-            {% for value in forecast %}
-                <li>{{ loop.index }}: {{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endblock %}
+            <label for="features">Input Features (comma-separated):</label><br>
+            <input type="text" name="features" required><br><br>
+
+            <input type="submit" value="Predict">
+        </form>
+    </div>
+
+    <script>
+        const productMap = {{ product_map | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
