@@ -1,55 +1,137 @@
 from flask import Flask, render_template, request, jsonify
-from tensorflow.keras.models import load_model
-import pickle
-import numpy as np
+import pandas as pd
 import os
+import numpy as np
+import pickle
+from tensorflow.keras.models import load_model
+import re
+import json
+import joblib
+
 
 app = Flask(__name__)
 
-# Load all models and scalers
-model_dir = 'models'
-models = {}
-scalers = {}
+# ========= STEP 1: Load Product List and Categories =========
+with open('data/product_list.json', 'r', encoding='utf-8') as f:
+    product_map = json.load(f)
 
-for i in range(1, 241):  # Assuming 240 models
-    model_name = f'model_{i}'
-    model_path = os.path.join(model_dir, f'{model_name}.h5')
-    scaler_path = os.path.join(model_dir, f'{model_name}_scaler.pkl')
-
-    try:
-        models[model_name] = load_model(model_path)
-        with open(scaler_path, 'rb') as f:
-            scalers[model_name] = pickle.load(f)
-    except Exception as e:
-        print(f"Error loading {model_name}: {e}")
+categories = list(product_map.keys())
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    product_list = []
+
+    # Flatten product list from product_map
+    for cat_products in product_map.values():
+        product_list.extend(cat_products)
+
+    return render_template('index.html', products=product_list)
+
+
+# ========= STEP 2: Helper Functions =========
+
+def clean_name_for_lstm(name):
+    """
+    Converts 'Cheese (Ayib)' → 'Cheese_Ayib' to match model filenames
+    """
+    import re
+    name = name.strip()
+    name = re.sub(r'[^\w\s]', '', name)  # Remove punctuation
+    name = re.sub(r'\s+', '_', name)     # Replace spaces with underscores
+    return name
+
+def load_pickle_model(filepath):
+    try:
+        return joblib.load(filepath)
+    except Exception as e:
+        print(f"[ERROR] Failed to load pickle file '{filepath}': {e}")
+        return None
+
+def load_h5_model(filepath):
+    try:
+        return load_model(filepath)
+    except Exception as e:
+        print(f"[ERROR] Failed to load Keras model '{filepath}': {e}")
+        return None
+
+
+# === Main Unified Loader ===
+
+def load_models(product):
+    product_clean = clean_name_for_lstm(product)
+    model_dir = "Models/"
+
+    file_paths = {
+        'arima': os.path.join(model_dir, f"{product_clean}_arima_model.pkl"),
+        'rf': os.path.join(model_dir, f"{product_clean}_rf_model.pkl"),
+        'lstm': os.path.join(model_dir, f"{product_clean}_lstm_model.h5"),
+        'scaler': os.path.join(model_dir, f"{product_clean}_scaler.pkl")
+    }
+
+    models = {}
+
+    # Load .pkl files using joblib
+    for key in ['arima', 'rf', 'scaler']:
+        try:
+            models[key] = joblib.load(file_paths[key])
+        except Exception:
+            print(f"[WARNING] '{key}' model missing or corrupted for '{product}'")
+
+    # Load .h5 model using Keras
+    try:
+        models['lstm'] = load_model(file_paths['lstm'])
+    except Exception:
+        print(f"[WARNING] 'lstm' model missing or corrupted for '{product}'")
+
+    return models  # Could be partial
+
+
+
+
+# ========= STEP 3: Flask Routes =========
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Example input fields (should match your form)
-        input_data = request.form.getlist('feature')  # e.g., 10 features
-        model_id = request.form.get('model_id')       # e.g., '1' to '240'
+        product = request.form['product']
+        features = request.form['features']
 
-        model_key = f'model_{model_id}'
+        # Parse input features
+        feature_array = np.array([float(x) for x in features.split(',')]).reshape(1, -1)
 
-        if model_key not in models or model_key not in scalers:
-            return jsonify({'error': f'Model {model_id} not found'}), 404
+        # Load any available models
+        models = load_models(product)
+        if not models:
+            return jsonify({'error': f"No models found for '{product}'."}), 404
 
-        input_array = np.array(input_data, dtype=float).reshape(1, -1)
-        scaled_input = scalers[model_key].transform(input_array)
-        scaled_input = scaled_input.reshape((1, scaled_input.shape[1], 1))  # LSTM shape
+        predictions = {}
 
-        prediction = models[model_key].predict(scaled_input)
-        prediction = prediction.flatten()[0]
+        # LSTM prediction (if LSTM and Scaler exist)
+        if 'lstm' in models and 'scaler' in models:
+            scaled = models['scaler'].transform(feature_array)
+            lstm_input = scaled.reshape((1, scaled.shape[1], 1))
+            lstm_pred = models['lstm'].predict(lstm_input)[0][0]
+            predictions['LSTM Prediction'] = float(lstm_pred)
 
-        return jsonify({'prediction': float(prediction)})
-    
+        # Random Forest prediction
+        if 'rf' in models:
+            rf_pred = models['rf'].predict(feature_array)[0]
+            predictions['Random Forest Prediction'] = float(rf_pred)
+
+        # ARIMA prediction
+        if 'arima' in models:
+            arima_pred = models['arima'].forecast(steps=1)[0]
+            predictions['ARIMA Forecast'] = float(arima_pred)
+
+        if not predictions:
+            return jsonify({'error': f"No usable models found for '{product}'."}), 500
+
+        return jsonify(predictions)
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# ========= STEP 4: Run Server =========
 
 if __name__ == '__main__':
     app.run(debug=True)
