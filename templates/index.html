@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Market Price Predictor</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -11,7 +12,7 @@
         <form action="/predict" method="POST">
             <label for="category">Select Category:</label>
             <select id="category" name="category" required onchange="updateProducts()">
-                <option value="">--Select Category--</option>
+                <option value="">-- Select Category --</option>
                 {% for cat in categories %}
                 <option value="{{ cat }}">{{ cat }}</option>
                 {% endfor %}
@@ -19,18 +20,23 @@
 
             <label for="product">Select Product:</label>
             <select id="product" name="product" required>
-                <option value="">--Select Product--</option>
+                <option value="">-- Select Product --</option>
             </select><br><br>
 
             <label for="features">Input Features (comma-separated):</label><br>
-            <input type="text" name="features" required><br><br>
+            <input type="text" name="features" placeholder="e.g. 23.1, 24.5, 22.0" required><br><br>
 
             <input type="submit" value="Predict">
         </form>
+
+        <footer>
+            <p>© 2025 Forecasting System</p>
+        </footer>
     </div>
 
+    <!-- Pass product map into JS -->
     <script>
-        const productMap = {{ product_map | tojson }};
+        const productMap = {{ product_map | tojson | safe }};
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
