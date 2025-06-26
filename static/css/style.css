@@ -54,7 +54,7 @@ select:focus {
 
 input[type="submit"] {
     background-color: #1b0952;
-    color: white;rgb(125, 52, 29)rgb(29, 34, 125)rgb(36, 41, 123);
+    color: white;
     padding: 12px 24px;
     font-size: 18px;
     border: none;
@@ -65,7 +65,7 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-    background-color: #f4511e;
+    background-color: #0b75e77d;
 }
 
 footer {
