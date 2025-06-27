@@ -1,0 +1,44 @@
+Teff (white): arima, rf
+Teff (red): arima, rf
+Maize (corn): arima, rf, lstm, scaler
+Rice (local): arima, rf
+Rice (imported): arima, rf
+Durum wheat: arima, rf, lstm, scaler
+Mixed grains (Balemashila): arima, rf, lstm, scaler
+Injera (ready-made): arima, rf, lstm, scaler
+Bread (white): arima, rf, lstm, scaler
+Bread (brown): arima, rf, lstm, scaler
+Onion (red): arima, rf
+Onion (white): arima, rf, lstm, scaler
+Garlic: arima, rf, lstm, scaler
+Pumpkin: arima, rf, lstm, scaler
+Kale (Gomen): arima, rf
+Eggplant: arima, rf, lstm, scaler
+Sweet potato: arima, rf, lstm, scaler
+Cauliflower: arima, rf, lstm, scaler
+Green beans: arima, rf, lstm, scaler
+Leek: arima, rf, lstm, scaler
+Pineapple: arima, rf, lstm, scaler
+Apple (local): arima, rf
+Apple (imported): arima, rf, lstm, scaler
+Dates: arima, rf, lstm, scaler
+Strawberry: arima, rf, lstm, scaler
+Beef (raw): arima, rf
+Chicken (live): arima, rf
+Chicken (dressed): arima, rf
+Milk (raw): arima, rf
+Milk (pasteurized): arima, rf, lstm, scaler
+Cheese (Ayib): arima, rf
+Butter (traditional): arima, rf
+Cooking oil (palm): arima, rf
+Cooking oil (sunflower): arima, rf, lstm, scaler
+Sugar (local): arima, rf
+Sugar (imported): arima, rf, lstm, scaler
+Flour (wheat): arima, rf
+Coffee (roasted): arima, rf
+Tea (local): arima, rf
+Baby food (e.g., Cerelac): arima, rf, lstm, scaler
+Pepper powder (berbere): arima, rf, lstm, scaler
+Shiro (powdered chickpea): arima, rf, lstm, scaler
+Spices mix (mitmita, korerima, etc.): arima, rf, lstm, scaler
+Roasted grains (nifro): arima, rf, lstm, scaler
